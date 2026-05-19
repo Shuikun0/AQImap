@@ -6,7 +6,7 @@
   <title>AQImap 空气质量地图</title>
   
   <!-- Browser Tab Emoji Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🌍</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 font-size=%2280%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>🌍</text></svg>">
   
   <!-- Meta tags for SEO -->
   <meta name="description" content="在交互式地图上追踪全球实时空气质量。分析 PM2.5、PM10、臭氧等污染物，提供高精度的本地化数据和详细的历史预测。">
@@ -356,12 +356,8 @@
       color: var(--text-secondary) !important;
     }
 
-    /* Floating Settings Gear Icon */
+    /* Settings Button inside Menu */
     #settings-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
       width: 42px;
       height: 42px;
       border-radius: var(--border-radius-md);
@@ -385,6 +381,57 @@
     #settings-btn.demo-active {
       border-color: var(--primary-blue);
       color: var(--primary-blue);
+    }
+
+    /* Top Right Menu Group Container */
+    .top-right-controls-wrapper {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .top-right-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s;
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .top-right-menu.collapsed {
+      opacity: 0;
+      transform: translateX(12px) scale(0.98);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #menu-toggle-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-clean);
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-clean);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    #menu-toggle-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-clean-hover);
+      color: var(--text-primary);
     }
 
     /* --- 6. Detailed Station Panel (Left Sidebar) --- */
@@ -683,10 +730,6 @@
 
     /* --- 8. Dynamic Pollutant Switcher Panel (Top Right) --- */
     .layer-switcher-panel {
-      position: absolute;
-      top: 20px;
-      right: 72px;
-      z-index: 100;
       width: auto;
       height: 42px;
       padding: 4px;
@@ -994,13 +1037,9 @@
         top: 12px;
         left: 12px;
       }
-      #settings-btn {
+      .top-right-controls-wrapper {
         top: 12px;
         right: 12px;
-      }
-      .layer-switcher-panel {
-        top: 12px;
-        right: 64px;
       }
       .detail-panel {
         top: 78px;
@@ -1025,13 +1064,46 @@
         width: calc(100% - 74px);
         max-width: none;
       }
-      
-      #settings-btn {
-        position: absolute;
+
+      .top-right-controls-wrapper {
         top: 12px;
         right: 12px;
-        width: 42px;
-        height: 42px;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+      }
+
+      #menu-toggle-btn {
+        order: 1;
+      }
+
+      .top-right-menu {
+        order: 2;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+      }
+      
+      .top-right-menu.collapsed {
+        transform: translateY(-12px) scale(0.98);
+      }
+
+      .layer-switcher-panel {
+        height: auto;
+        padding: 4px;
+        max-width: 280px;
+      }
+      
+      .layer-options {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 4px;
+      }
+      
+      .layer-option {
+        padding: 5px 10px;
+        font-size: 11.5px;
       }
 
       /* Detail Panel on Mobile: Transform into bottom sheet */
@@ -1058,36 +1130,6 @@
 
       .panel-content {
         padding: 14px 14px 24px 14px;
-      }
-
-      /* Reposition floating switcher to bottom of viewport */
-      .layer-switcher-panel {
-        position: fixed;
-        top: auto;
-        bottom: 20px;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        height: auto;
-        padding: 4px;
-        overflow-x: auto;
-        scrollbar-width: none;
-        z-index: 100;
-      }
-      
-      .layer-switcher-panel::-webkit-scrollbar {
-        display: none;
-      }
-      
-      .layer-options {
-        display: flex;
-        flex-direction: row;
-        gap: 4px;
-      }
-      
-      .layer-option {
-        padding: 5px 10px;
-        font-size: 11.5px;
       }
 
       .leaflet-control-zoom {
@@ -1117,10 +1159,7 @@
       <ul id="search-suggestions" class="glass-panel search-suggestions hidden"></ul>
     </div>
 
-    <!-- Floating Settings Button (Floating Top Right) -->
-    <button id="settings-btn" class="glass-btn action-btn animate-fade-in" title="API 配置">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-    </button>
+
     
     <!-- Hidden Locate Button to avoid JS errors -->
     <button id="locate-btn" class="glass-btn action-btn" title="Locate Me" style="display: none;">
@@ -1223,38 +1262,56 @@
       </div>
     </main>
 
-    <!-- Dynamic Pollutant Layer Switcher Widget (Floating Panel Top Right) -->
-    <div class="glass-panel layer-switcher-panel animate-fade-in" id="layer-switcher">
-      <div class="layer-options">
-        <label class="layer-option active">
-          <input type="radio" name="aqi-layer" value="usepa-aqi" checked>
-          <span class="radio-label">AQI</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-pm25">
-          <span class="radio-label">PM₂.₅</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-10">
-          <span class="radio-label">PM₁₀</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-o3">
-          <span class="radio-label">O₃</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-no2">
-          <span class="radio-label">NO₂</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-so2">
-          <span class="radio-label">SO₂</span>
-        </label>
-        <label class="layer-option">
-          <input type="radio" name="aqi-layer" value="usepa-co">
-          <span class="radio-label">CO</span>
-        </label>
+    <!-- Unified Top Right Control Menu (Expandable) -->
+    <div class="top-right-controls-wrapper animate-fade-in">
+      <div id="top-right-menu" class="top-right-menu collapsed">
+        <!-- Dynamic Pollutant Layer Switcher Widget -->
+        <div class="glass-panel layer-switcher-panel" id="layer-switcher">
+          <div class="layer-options">
+            <label class="layer-option active">
+              <input type="radio" name="aqi-layer" value="usepa-aqi" checked>
+              <span class="radio-label">AQI</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-pm25">
+              <span class="radio-label">PM₂.₅</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-10">
+              <span class="radio-label">PM₁₀</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-o3">
+              <span class="radio-label">O₃</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-no2">
+              <span class="radio-label">NO₂</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-so2">
+              <span class="radio-label">SO₂</span>
+            </label>
+            <label class="layer-option">
+              <input type="radio" name="aqi-layer" value="usepa-co">
+              <span class="radio-label">CO</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Floating Settings Button -->
+        <button id="settings-btn" class="glass-btn action-btn" title="API 配置">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
+
+      <!-- Menu Toggle Button -->
+      <button id="menu-toggle-btn" class="glass-btn action-btn" title="展开控制菜单">
+        <!-- Sliders Icon (Open) -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon-open"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <!-- Close Icon (Closed) -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon-close hidden"><line x1="18" y1="6" x2="6" y2="18"/><path d="m6 6 12 12"/></svg>
+      </button>
     </div>
   </div>
 
@@ -1332,8 +1389,8 @@
       demoCoordinates: [31.2304, 121.4737],
       
       // Map configuration defaults
-      defaultCenter: [35.0, 105.0],
-      defaultZoom: 4,
+      defaultCenter: [19.2, 109.6],
+      defaultZoom: 6,
       maxZoom: 18
     };
 
@@ -1455,7 +1512,9 @@
         cancelSettingsBtn: document.getElementById('cancel-settings'),
         waqiTokenInput: document.getElementById('waqi-token'),
         toggleTokenVisibility: document.getElementById('toggle-token-visibility'),
-        demoModeCheckbox: document.getElementById('demo-mode-checkbox')
+        demoModeCheckbox: document.getElementById('demo-mode-checkbox'),
+        menuToggleBtn: document.getElementById('menu-toggle-btn'),
+        topRightMenu: document.getElementById('top-right-menu')
       };
     }
 
@@ -1488,18 +1547,6 @@
         setTimeout(() => {
           openSettingsDialog();
         }, 1000);
-      } else if (State.isDemoMode && !State.activeToken) {
-        setTimeout(() => {
-          loadStationDetails(...State.demoCoordinates);
-          State.map.flyTo(State.demoCoordinates, 9);
-        }, 600);
-      } else {
-        // Active token is present, center on Beijing and load its details (without triggering geolocation)
-        setTimeout(() => {
-          const chinaCenter = [39.9042, 116.4074];
-          loadStationDetails(...chinaCenter);
-          State.map.flyTo(chinaCenter, 7);
-        }, 600);
       }
     }
 
@@ -1550,6 +1597,7 @@
 
       DOM.locateBtn.addEventListener('click', () => triggerBrowserGeolocation(true));
       DOM.settingsBtn.addEventListener('click', openSettingsDialog);
+      DOM.menuToggleBtn.addEventListener('click', toggleTopRightMenu);
       
       DOM.search.addEventListener('input', handleSearchInput);
       DOM.search.addEventListener('focus', () => {
@@ -1913,6 +1961,32 @@
       DOM.settingsDialog.close();
     }
 
+    function toggleTopRightMenu() {
+      const isCollapsed = DOM.topRightMenu.classList.toggle('collapsed');
+      
+      const openIcon = DOM.menuToggleBtn.querySelector('.menu-icon-open');
+      const closeIcon = DOM.menuToggleBtn.querySelector('.menu-icon-close');
+      
+      if (isCollapsed) {
+        openIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        DOM.menuToggleBtn.title = '展开控制菜单';
+      } else {
+        openIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        DOM.menuToggleBtn.title = '折叠控制菜单';
+      }
+    }
+
+    function collapseTopRightMenu() {
+      DOM.topRightMenu.classList.add('collapsed');
+      const openIcon = DOM.menuToggleBtn.querySelector('.menu-icon-open');
+      const closeIcon = DOM.menuToggleBtn.querySelector('.menu-icon-close');
+      openIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      DOM.menuToggleBtn.title = '展开控制菜单';
+    }
+
     function handleSettingsSubmit(e) {
       e.preventDefault();
       
@@ -1935,16 +2009,10 @@
       updateWaqiTileLayer();
       
       closeSettingsDialog();
+      collapseTopRightMenu();
       
-      if (isDemo && !token) {
-        loadStationDetails(...State.demoCoordinates);
-        State.map.flyTo(State.demoCoordinates, 9);
-      } else {
-        // Active token saved, fly to Beijing and load details (without triggering geolocation)
-        const chinaCenter = [39.9042, 116.4074];
-        loadStationDetails(...chinaCenter);
-        State.map.flyTo(chinaCenter, 7);
-      }
+      hideDetailsPanel();
+      State.map.flyTo(State.defaultCenter, State.defaultZoom);
     }
   </script>
 </body>
