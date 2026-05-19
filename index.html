@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQImap - Global Real-time Air Quality Tracker</title>
+  <title>AQImap 空气质量地图</title>
   
   <!-- Browser Tab Emoji Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🌍</text></svg>">
   
   <!-- Meta tags for SEO -->
-  <meta name="description" content="Track global real-time air quality on an interactive map. Analyze PM2.5, PM10, Ozone, and more with high-fidelity localized feeds and detailed historical forecasts.">
-  <meta name="keywords" content="air quality, AQI, real-time map, PM2.5, global environment, pollution tracker">
+  <meta name="description" content="在交互式地图上追踪全球实时空气质量。分析 PM2.5、PM10、臭氧等污染物，提供高精度的本地化数据和详细的历史预测。">
+  <meta name="keywords" content="空气质量, AQI, 实时地图, PM2.5, 全球环境, 污染追踪">
   
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -225,66 +225,24 @@
       height: 100%;
       pointer-events: none;
       z-index: 10;
-      display: grid;
-      grid-template-rows: auto 1fr;
       padding: 20px;
-      gap: 20px;
     }
 
-    .main-header,
+    .search-container,
     .detail-panel,
     .layer-switcher-panel,
-    .settings-dialog {
+    .settings-dialog,
+    #settings-btn {
       pointer-events: auto;
     }
 
-    /* --- 5. Main Header --- */
-    .main-header {
-      grid-row: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      border-radius: var(--border-radius-lg);
-      gap: 20px;
-    }
-
-    /* Logo */
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-icon {
-      background: var(--border-clean);
-      color: var(--primary-blue);
-      padding: 6px;
-      border-radius: var(--border-radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-text h1 {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      color: var(--text-primary);
-    }
-    .logo-text span {
-      font-size: 10px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: block;
-    }
-
-    /* Search Box */
+    /* --- 5. Floating Search Box --- */
     .search-container {
-      position: relative;
-      flex: 1;
-      max-width: 440px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 360px;
+      z-index: 100;
     }
 
     .search-input-wrapper {
@@ -302,19 +260,21 @@
 
     #station-search {
       width: 100%;
-      background: var(--bg-primary);
+      background: var(--bg-surface);
       border: 1px solid var(--border-clean);
-      border-radius: var(--border-radius-sm);
-      padding: 10px 14px 10px 40px;
+      border-radius: var(--border-radius-md);
+      padding: 11px 14px 11px 40px;
       color: var(--text-primary);
       font-family: var(--font-main);
       font-size: 13.5px;
       outline: none;
+      box-shadow: var(--shadow-clean);
       transition: var(--transition-fast);
     }
 
     #station-search:focus {
       border-color: var(--border-clean-focus);
+      background: var(--bg-surface-hover);
     }
 
     #station-search:focus + .search-icon {
@@ -396,23 +356,49 @@
       color: var(--text-secondary) !important;
     }
 
-    /* Header Action Buttons */
-    .header-actions {
+    /* Floating Settings Gear Icon */
+    #settings-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--border-radius-md);
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-clean);
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-clean);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    #settings-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-clean-hover);
+      color: var(--text-primary);
+    }
+
+    #settings-btn.demo-active {
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
     }
 
     /* --- 6. Detailed Station Panel (Left Sidebar) --- */
     .detail-panel {
-      grid-row: 2;
-      justify-self: start;
+      position: absolute;
+      top: 86px;
+      left: 20px;
       width: 360px;
       max-height: calc(100vh - 120px);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       border-radius: var(--border-radius-lg);
+      z-index: 99;
     }
 
     .detail-panel.hidden {
@@ -698,14 +684,16 @@
     /* --- 8. Dynamic Pollutant Switcher Panel (Top Right) --- */
     .layer-switcher-panel {
       position: absolute;
-      top: 90px;
-      right: 20px;
-      z-index: 10;
+      top: 20px;
+      right: 72px;
+      z-index: 100;
       width: auto;
+      height: 42px;
       padding: 4px;
       border-radius: var(--border-radius-md);
       display: flex;
       flex-direction: row;
+      align-items: center;
       gap: 4px;
     }
 
@@ -1001,16 +989,22 @@
     @media (max-width: 1024px) {
       .app-overlay {
         padding: 12px;
-        gap: 12px;
       }
-      
-      .main-header {
-        padding: 8px 14px;
+      .search-container {
+        top: 12px;
+        left: 12px;
       }
-      
-      .layer-switcher-panel {
-        top: 80px;
+      #settings-btn {
+        top: 12px;
         right: 12px;
+      }
+      .layer-switcher-panel {
+        top: 12px;
+        right: 64px;
+      }
+      .detail-panel {
+        top: 78px;
+        left: 12px;
       }
     }
 
@@ -1020,37 +1014,24 @@
       }
       
       .app-overlay {
-        display: flex;
-        flex-direction: column;
-        height: auto;
-        min-height: 100vh;
+        display: block;
         padding: 8px;
-        gap: 8px;
-      }
-      
-      .main-header {
-        flex-direction: column;
-        align-items: stretch;
-        border-radius: var(--border-radius-md);
-        padding: 10px;
-        gap: 10px;
-      }
-      
-      .logo-area {
-        justify-content: center;
       }
       
       .search-container {
-        max-width: 100%;
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: calc(100% - 74px);
+        max-width: none;
       }
       
-      .header-actions {
-        justify-content: center;
-        width: 100%;
-      }
-      .header-actions .glass-btn {
-        flex: 1;
-        justify-content: center;
+      #settings-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 42px;
+        height: 42px;
       }
 
       /* Detail Panel on Mobile: Transform into bottom sheet */
@@ -1058,10 +1039,11 @@
         position: fixed;
         bottom: 0;
         left: 0;
+        top: auto;
         width: 100%;
         max-height: 55vh;
         border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-        z-index: 100;
+        z-index: 1000;
         animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
       
@@ -1078,7 +1060,7 @@
         padding: 14px 14px 24px 14px;
       }
 
-      /* Reposition floating widgets */
+      /* Reposition floating switcher to bottom of viewport */
       .layer-switcher-panel {
         position: fixed;
         top: auto;
@@ -1086,18 +1068,23 @@
         left: 12px;
         right: 12px;
         width: auto;
+        height: auto;
         padding: 4px;
         overflow-x: auto;
         scrollbar-width: none;
+        z-index: 100;
       }
+      
       .layer-switcher-panel::-webkit-scrollbar {
         display: none;
       }
+      
       .layer-options {
         display: flex;
         flex-direction: row;
         gap: 4px;
       }
+      
       .layer-option {
         padding: 5px 10px;
         font-size: 11.5px;
@@ -1117,45 +1104,34 @@
   <!-- App Overlay Layout -->
   <div class="app-overlay">
     
-    <!-- Top Header Bar -->
-    <header class="glass-panel main-header animate-fade-in" id="main-header">
-      <div class="logo-area">
-        <div class="logo-text">
-          <h1>AQImap</h1>
-        </div>
-      </div>
-
-      <!-- Search Section -->
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="station-search" placeholder="Search city or station (e.g. London, Beijing)..." autocomplete="off">
-          <button id="clear-search-btn" class="icon-btn hidden" aria-label="Clear search">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          </button>
-        </div>
-        <!-- Autocomplete dropdown -->
-        <ul id="search-suggestions" class="glass-panel search-suggestions hidden"></ul>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="header-actions">
-        <button id="locate-btn" class="glass-btn action-btn" title="Locate Me" style="display: none;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-          <span class="btn-text">Locate</span>
-        </button>
-        
-        <button id="settings-btn" class="glass-btn action-btn" title="API Configuration">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span class="btn-text">Settings</span>
+    <!-- Search Section (Floating Top Left) -->
+    <div class="search-container animate-fade-in">
+      <div class="search-input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="station-search" placeholder="搜索城市或监测站 (如: 北京、伦敦)..." autocomplete="off">
+        <button id="clear-search-btn" class="icon-btn hidden" aria-label="清除搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
-    </header>
+      <!-- Autocomplete dropdown -->
+      <ul id="search-suggestions" class="glass-panel search-suggestions hidden"></ul>
+    </div>
+
+    <!-- Floating Settings Button (Floating Top Right) -->
+    <button id="settings-btn" class="glass-btn action-btn animate-fade-in" title="API 配置">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+    
+    <!-- Hidden Locate Button to avoid JS errors -->
+    <button id="locate-btn" class="glass-btn action-btn" title="Locate Me" style="display: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      <span class="btn-text">Locate</span>
+    </button>
 
     <!-- Sidebar / Detail Panel (Left panel) -->
     <main class="glass-panel detail-panel hidden" id="detail-panel">
       <!-- Close button for panel -->
-      <button id="close-panel-btn" class="close-btn" aria-label="Close detailed panel">
+      <button id="close-panel-btn" class="close-btn" aria-label="关闭详情面板">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
 
@@ -1163,8 +1139,8 @@
         <!-- Station General Info -->
         <section class="station-meta">
           <div class="station-header">
-            <h2 id="detail-station-name">Loading station...</h2>
-            <p class="timestamp" id="detail-timestamp">Updated: --</p>
+            <h2 id="detail-station-name">正在加载站点...</h2>
+            <p class="timestamp" id="detail-timestamp">更新时间: --</p>
           </div>
         </section>
 
@@ -1173,8 +1149,8 @@
           <div class="aqi-badge-container">
             <div id="detail-aqi-value" class="aqi-large-number">--</div>
             <div class="aqi-label-wrapper">
-              <span class="aqi-title">AQI</span>
-              <span id="detail-aqi-status" class="aqi-status-text">Determining...</span>
+              <span class="aqi-title">空气质量指数 (AQI)</span>
+              <span id="detail-aqi-status" class="aqi-status-text">检测中...</span>
             </div>
           </div>
           <div class="aqi-bar-gauge">
@@ -1186,19 +1162,18 @@
         <section class="health-advice-card" id="health-advice-card">
           <div class="advice-icon" id="advice-icon"></div>
           <div class="advice-content">
-            <h3>Health Advisory</h3>
-            <p id="detail-health-advice">Please select a location on the map or search to view dynamic advisory guidelines.</p>
+            <h3>健康指引</h3>
+            <p id="detail-health-advice">请在地图上选择一个位置或进行搜索，以查看动态的健康建议与指引。</p>
           </div>
         </section>
 
         <!-- Tabs or Dividers for detailed metrics -->
         <div class="details-divider">
-          <span>Detailed Pollutants</span>
+          <span>详细污染物</span>
         </div>
 
         <!-- Pollutant Grid (Bars & Progress) -->
         <section class="pollutant-grid" id="pollutant-grid">
-          <!-- Dynamically populated via JS -->
           <div class="pollutant-card skeleton"></div>
           <div class="pollutant-card skeleton"></div>
           <div class="pollutant-card skeleton"></div>
@@ -1207,33 +1182,33 @@
 
         <!-- Weather Section -->
         <div class="details-divider">
-          <span>Weather Conditions</span>
+          <span>实时天气状况</span>
         </div>
 
         <section class="weather-metrics" id="weather-metrics">
           <div class="weather-card">
-            <span class="weather-label">Temperature</span>
+            <span class="weather-label">温度</span>
             <div class="weather-value-group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="weather-icon"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>
               <span id="weather-temp">--</span>
             </div>
           </div>
           <div class="weather-card">
-            <span class="weather-label">Humidity</span>
+            <span class="weather-label">湿度</span>
             <div class="weather-value-group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="weather-icon"><path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7Z"/></svg>
               <span id="weather-humidity">--</span>
             </div>
           </div>
           <div class="weather-card">
-            <span class="weather-label">Wind Speed</span>
+            <span class="weather-label">风速</span>
             <div class="weather-value-group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="weather-icon"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
               <span id="weather-wind">--</span>
             </div>
           </div>
           <div class="weather-card">
-            <span class="weather-label">Baro Pressure</span>
+            <span class="weather-label">气压</span>
             <div class="weather-value-group">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="weather-icon"><circle cx="12" cy="12" r="10"/><path d="m12 12-4-4"/><path d="M12 7v5"/></svg>
               <span id="weather-pressure">--</span>
@@ -1243,7 +1218,7 @@
 
         <!-- Source Citation -->
         <footer class="detail-footer">
-          <p id="detail-attribution">Data provided by WAQI network</p>
+          <p id="detail-attribution">数据由 WAQI 网络提供</p>
         </footer>
       </div>
     </main>
@@ -1286,21 +1261,21 @@
   <!-- Settings / API Key Modal -->
   <dialog id="settings-dialog" class="glass-panel settings-dialog">
     <div class="dialog-header">
-      <h2>API Configuration</h2>
-      <button id="close-settings-btn" class="close-btn" aria-label="Close dialog">
+      <h2>API 配置</h2>
+      <button id="close-settings-btn" class="close-btn" aria-label="关闭对话框">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
     </div>
     
     <div class="dialog-body">
-      <p class="dialog-desc">This application utilizes real-time air quality feeds provided by the World Air Quality Index (WAQI) project.</p>
+      <p class="dialog-desc">本应用使用世界空气质量指数 (WAQI) 项目提供的实时空气质量监测数据。</p>
       
       <div class="token-instructions">
-        <h3>How to get a free Token:</h3>
+        <h3>如何获取免费 Token:</h3>
         <ol>
-          <li>Visit the free token generator: <a href="https://aqicn.org/data-platform/token/" target="_blank" rel="noopener noreferrer" class="external-link">aqicn.org/data-platform/token/</a></li>
-          <li>Enter your Email address and Name.</li>
-          <li>Check your email inbox to receive your unique API Token immediately.</li>
+          <li>访问免费 Token 生成页面: <a href="https://aqicn.org/data-platform/token/" target="_blank" rel="noopener noreferrer" class="external-link">aqicn.org/data-platform/token/</a></li>
+          <li>输入您的电子邮箱和姓名进行申请。</li>
+          <li>检查您的电子邮箱，即可立即收到您专属的 API Token。</li>
         </ol>
       </div>
 
@@ -1308,12 +1283,12 @@
         <div class="form-group">
           <label for="waqi-token">WAQI API Token</label>
           <div class="input-with-button">
-            <input type="password" id="waqi-token" placeholder="Paste your API token here..." autocomplete="off">
-            <button type="button" id="toggle-token-visibility" class="glass-btn icon-btn" title="Toggle visibility">
+            <input type="password" id="waqi-token" placeholder="在此粘贴您的 API Token..." autocomplete="off">
+            <button type="button" id="toggle-token-visibility" class="glass-btn icon-btn" title="切换可见性">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
-          <span class="field-hint">Your token stays local inside your browser's <code>localStorage</code>.</span>
+          <span class="field-hint">您的 Token 安全地保存在您浏览器的 <code>localStorage</code> 本地存储中。</span>
         </div>
 
         <!-- Demo Mode Option -->
@@ -1321,13 +1296,13 @@
           <label class="checkbox-container">
             <input type="checkbox" id="demo-mode-checkbox">
             <span class="checkmark"></span>
-            <span class="checkbox-label">Enable Shanghai Demo Mode (If you don't have a token yet)</span>
+            <span class="checkbox-label">启用上海演示模式 (如果您目前还没有 Token)</span>
           </label>
         </div>
 
         <div class="dialog-actions">
-          <button type="button" id="cancel-settings" class="glass-btn secondary">Cancel</button>
-          <button type="submit" id="save-settings" class="glass-btn primary">Save & Apply</button>
+          <button type="button" id="cancel-settings" class="glass-btn secondary">取消</button>
+          <button type="submit" id="save-settings" class="glass-btn primary">保存并应用</button>
         </div>
       </form>
     </div>
@@ -1339,8 +1314,8 @@
   <!-- Unified Core Application JS Controller -->
   <script>
     /**
-     * AeroScope - Global Real-time Air Quality Tracker
-     * Core Application Logic & API Integrations
+     * AQImap - 全球实时空气质量地图
+     * 核心应用逻辑与 API 集成
      */
 
     // --- 1. Global Application State ---
@@ -1357,8 +1332,8 @@
       demoCoordinates: [31.2304, 121.4737],
       
       // Map configuration defaults
-      defaultCenter: [20, 10],
-      defaultZoom: 3,
+      defaultCenter: [35.0, 105.0],
+      defaultZoom: 4,
       maxZoom: 18
     };
 
@@ -1367,67 +1342,67 @@
       {
         min: 0,
         max: 50,
-        status: 'Good',
+        status: '优',
         colorClass: 'aqi-good-theme',
         hslColor: 'var(--aqi-good)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-        advice: 'Air quality is satisfactory, and air pollution poses little or no risk. Great day for outdoor activities!'
+        advice: '空气质量令人满意，基本无空气污染。非常适合户外活动！'
       },
       {
         min: 51,
         max: 100,
-        status: 'Moderate',
+        status: '良',
         colorClass: 'aqi-moderate-theme',
         hslColor: 'var(--aqi-moderate)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-        advice: 'Air quality is acceptable. However, active children and adults, and people with respiratory disease, should limit prolonged outdoor exertion.'
+        advice: '空气质量可接受。但某些敏感人群可能对特定污染物存在轻微反应，敏感人群建议适当减少剧烈户外运动。'
       },
       {
         min: 101,
         max: 150,
-        status: 'Unhealthy for Sensitive Groups',
+        status: '轻度污染',
         colorClass: 'aqi-sensitive-theme',
         hslColor: 'var(--aqi-sensitive)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="16" x2="16" y2="14"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-        advice: 'Sensitive groups (children, elderly, and people with lung or heart issues) may experience health effects. General public is less likely to be affected.'
+        advice: '易感人群（儿童、老人及呼吸系统疾病患者等）健康状况可能会受到影响，敏感人群应减少长时间或高强度的户外运动。'
       },
       {
         min: 151,
         max: 200,
-        status: 'Unhealthy',
+        status: '中度污染',
         colorClass: 'aqi-unhealthy-theme',
         hslColor: 'var(--aqi-unhealthy)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-        advice: 'Everyone may begin to experience health effects. Sensitive groups may experience more serious health effects. Wear a mask outdoors and close windows.'
+        advice: '每个人的健康都可能开始受到影响，敏感人群可能受到更严重的影响。建议戴上口罩，减少户外活动，关闭窗户。'
       },
       {
         min: 201,
         max: 300,
-        status: 'Very Unhealthy',
+        status: '重度污染',
         colorClass: 'aqi-veryunhealthy-theme',
         hslColor: 'var(--aqi-veryunhealthy)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 17s-1.5-3-4-3-4 3-4 3"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
-        advice: 'Health alert: everyone may experience more serious health effects. Active children and adults should avoid all outdoor physical activity.'
+        advice: '健康警报！所有人都有可能出现较严重的健康反应。老人、儿童及心肺疾病患者应留在室内，避免一切户外身体活动。'
       },
       {
         min: 301,
         max: 9999,
-        status: 'Hazardous',
+        status: '严重污染',
         colorClass: 'aqi-hazardous-theme',
         hslColor: 'var(--aqi-hazardous)',
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/><path d="M9 10h6"/><path d="M12 8v4"/></svg>',
-        advice: 'Emergency conditions! The entire population is more likely to be affected. Avoid all outdoor exertion; stay indoors in a clean room.'
+        advice: '紧急健康危害状况！全体人群健康受影响的可能性极高。请避免所有户外活动，留在装有空气净化器的室内。'
       }
     ];
 
     function getAqiConfig(aqi) {
       if (aqi === null || aqi === undefined || isNaN(aqi)) {
         return {
-          status: 'Unknown',
+          status: '未知',
           colorClass: '',
           hslColor: 'var(--text-muted)',
           icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-          advice: 'No air quality index details are available for this location.'
+          advice: '该位置当前没有可用的空气质量指数详情。'
         };
       }
       const val = parseInt(aqi, 10);
@@ -1499,13 +1474,12 @@
     }
 
     function updateDemoIndicator() {
-      const tokenText = DOM.settingsBtn.querySelector('.btn-text');
       if (State.isDemoMode && !State.activeToken) {
         DOM.settingsBtn.classList.add('demo-active');
-        if (tokenText) tokenText.innerText = 'Demo (SH)';
+        DOM.settingsBtn.title = '演示模式 (上海)';
       } else {
         DOM.settingsBtn.classList.remove('demo-active');
-        if (tokenText) tokenText.innerText = 'Settings';
+        DOM.settingsBtn.title = 'API 配置';
       }
     }
 
@@ -1520,7 +1494,12 @@
           State.map.flyTo(State.demoCoordinates, 9);
         }, 600);
       } else {
-        triggerBrowserGeolocation(false);
+        // Active token is present, center on Beijing and load its details (without triggering geolocation)
+        setTimeout(() => {
+          const chinaCenter = [39.9042, 116.4074];
+          loadStationDetails(...chinaCenter);
+          State.map.flyTo(chinaCenter, 7);
+        }, 600);
       }
     }
 
@@ -1689,7 +1668,7 @@
         }
       } catch (err) {
         console.error('Search API error:', err);
-        renderSearchError('Error contacting WAQI servers.');
+        renderSearchError('无法连接 WAQI 服务器。');
       }
     }
 
@@ -1700,7 +1679,7 @@
       if (stations.length === 0) {
         const emptyLi = document.createElement('li');
         emptyLi.className = 'suggestion-no-results';
-        emptyLi.innerText = 'No stations found matching keyword';
+        emptyLi.innerText = '未找到匹配的监测站';
         DOM.searchSuggestions.appendChild(emptyLi);
         return;
       }
@@ -1753,7 +1732,7 @@
       DOM.searchSuggestions.classList.remove('hidden');
       const errLi = document.createElement('li');
       errLi.className = 'suggestion-no-results';
-      errLi.innerText = message || 'Error performing query';
+      errLi.innerText = message || '查询出错';
       DOM.searchSuggestions.appendChild(errLi);
     }
 
@@ -1776,17 +1755,17 @@
         }
       } catch (err) {
         console.error('Fetch Feed API error:', err);
-        handleLoadError('Network connectivity error. Please check your token or offline status.');
+        handleLoadError('网络连接错误。请检查您的网络连接或 Token 状态。');
       }
     }
 
     function renderLoadingSkeletons() {
-      DOM.stationName.innerText = 'Analyzing atmosphere...';
-      DOM.timestamp.innerText = 'Syncing...';
+      DOM.stationName.innerText = '正在分析大气状况...';
+      DOM.timestamp.innerText = '同步中...';
       DOM.aqiValue.innerText = '--';
-      DOM.aqiStatus.innerText = 'Syncing...';
+      DOM.aqiStatus.innerText = '同步中...';
       DOM.gaugePointer.style.left = '0%';
-      DOM.healthAdviceText.innerText = 'Loading real-time advisory details for this station...';
+      DOM.healthAdviceText.innerText = '正在加载该监测站的实时空气质量详情与健康建议...';
       
       DOM.pollutantGrid.innerHTML = `
         <div class="pollutant-card skeleton"></div>
@@ -1805,9 +1784,9 @@
       DOM.stationName.innerText = data.city.name;
       
       if (data.time && data.time.s) {
-        DOM.timestamp.innerText = `Updated: ${data.time.s} (${data.time.tz || 'Local'})`;
+        DOM.timestamp.innerText = `更新时间: ${data.time.s} (${data.time.tz || '本地时间'})`;
       } else {
-        DOM.timestamp.innerText = 'Updated: Real-time';
+        DOM.timestamp.innerText = '更新时间: 实时';
       }
       
       const aqi = data.aqi;
@@ -1835,12 +1814,12 @@
       DOM.pollutantGrid.innerHTML = '';
       
       const pollutants = [
-        { key: 'pm25', label: 'Fine Dust', sub: 'PM2.5', unit: 'µg/m³', max: 300 },
-        { key: 'pm10', label: 'Coarse Dust', sub: 'PM10', unit: 'µg/m³', max: 150 },
-        { key: 'o3', label: 'Ozone', sub: 'O3', unit: 'ppb', max: 120 },
-        { key: 'no2', label: 'Nitrogen Oxide', sub: 'NO2', unit: 'ppb', max: 100 },
-        { key: 'so2', label: 'Sulfur Dioxide', sub: 'SO2', unit: 'ppb', max: 80 },
-        { key: 'co', label: 'Carbon Monoxide', sub: 'CO', unit: 'ppm', max: 20 }
+        { key: 'pm25', label: '细颗粒物', sub: 'PM2.5', unit: 'µg/m³', max: 300 },
+        { key: 'pm10', label: '可吸入颗粒物', sub: 'PM10', unit: 'µg/m³', max: 150 },
+        { key: 'o3', label: '臭氧', sub: 'O3', unit: 'ppb', max: 120 },
+        { key: 'no2', label: '二氧化氮', sub: 'NO2', unit: 'ppb', max: 100 },
+        { key: 'so2', label: '二氧化硫', sub: 'SO2', unit: 'ppb', max: 80 },
+        { key: 'co', label: '一氧化碳', sub: 'CO', unit: 'ppm', max: 20 }
       ];
 
       let hasPollutants = false;
@@ -1878,7 +1857,7 @@
       if (!hasPollutants) {
         DOM.pollutantGrid.innerHTML = `
           <div class="pollutant-card" style="grid-column: span 2; text-align: center; color: var(--text-secondary); padding: 20px;">
-            No detailed pollutant breakdowns returned for this station.
+            该监测站未返回详细污染物分解数据。
           </div>
         `;
       }
@@ -1892,24 +1871,24 @@
 
       if (data.attributions && data.attributions.length > 0) {
         const attribNames = data.attributions.map(a => a.name).join(', ');
-        DOM.attribution.innerText = `Data: ${attribNames}`;
+        DOM.attribution.innerText = `数据来源: ${attribNames}`;
       } else {
-        DOM.attribution.innerText = 'Data: World Air Quality Index Network';
+        DOM.attribution.innerText = '数据来源: 世界空气质量指数网络';
       }
     }
 
     function handleLoadError(message) {
-      DOM.stationName.innerText = 'API Feed Error';
-      DOM.timestamp.innerText = 'N/A';
+      DOM.stationName.innerText = 'API 数据加载错误';
+      DOM.timestamp.innerText = '无';
       DOM.aqiValue.innerText = '?';
-      DOM.aqiStatus.innerText = 'Error loading feed';
+      DOM.aqiStatus.innerText = '加载数据失败';
       DOM.aqiStatus.style.color = 'var(--aqi-unhealthy)';
       DOM.gaugePointer.style.left = '0%';
-      DOM.healthAdviceText.innerText = message || 'The feed request failed. This could be due to a blocked coordinate query, rate limits, or an invalid token.';
+      DOM.healthAdviceText.innerText = message || '请求数据失败。这可能是由于坐标超出范围、请求超限或 API Token 无效引起的。';
       
       DOM.pollutantGrid.innerHTML = `
         <div class="pollutant-card" style="grid-column: span 2; text-align: center; color: var(--text-secondary); padding: 16px;">
-          Failed to gather detailed atmospheric data.
+          获取详细大气数据失败。
         </div>
       `;
     }
@@ -1941,7 +1920,7 @@
       const isDemo = DOM.demoModeCheckbox.checked;
       
       if (!token && !isDemo) {
-        alert('Please enter a valid WAQI API Token or check "Enable Shanghai Demo Mode" to proceed.');
+        alert('请输入有效的 WAQI API Token 或勾选“启用上海演示模式”以继续。');
         DOM.waqiTokenInput.focus();
         return;
       }
@@ -1961,7 +1940,10 @@
         loadStationDetails(...State.demoCoordinates);
         State.map.flyTo(State.demoCoordinates, 9);
       } else {
-        triggerBrowserGeolocation(false);
+        // Active token saved, fly to Beijing and load details (without triggering geolocation)
+        const chinaCenter = [39.9042, 116.4074];
+        loadStationDetails(...chinaCenter);
+        State.map.flyTo(chinaCenter, 7);
       }
     }
   </script>
