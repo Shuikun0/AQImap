@@ -401,8 +401,8 @@
       z-index: 99;
     }
 
-    .detail-panel.hidden {
-      display: none;
+    .hidden {
+      display: none !important;
     }
 
     .panel-content {
@@ -1655,7 +1655,7 @@
 
     async function performSearch(query) {
       const token = State.activeToken || 'demo';
-      const url = `https://api.waqicn.org/search/?token=${token}&keyword=${encodeURIComponent(query)}`;
+      const url = `https://api.waqi.info/search/?token=${token}&keyword=${encodeURIComponent(query)}`;
 
       try {
         const res = await fetch(url);
@@ -1742,7 +1742,7 @@
       renderLoadingSkeletons();
       
       const token = State.activeToken || 'demo';
-      const url = `https://api.waqicn.org/feed/geo:${lat};${lng}/?token=${token}`;
+      const url = `https://api.waqi.info/feed/geo:${lat};${lng}/?token=${token}`;
 
       try {
         const res = await fetch(url);
