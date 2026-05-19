@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AeroScope - Global Real-time Air Quality Tracker</title>
+  <title>AQImap - Global Real-time Air Quality Tracker</title>
+  
+  <!-- Browser Tab Emoji Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🌍</text></svg>">
   
   <!-- Meta tags for SEO -->
   <meta name="description" content="Track global real-time air quality on an interactive map. Analyze PM2.5, PM10, Ozone, and more with high-fidelity localized feeds and detailed historical forecasts.">
@@ -230,7 +233,6 @@
 
     .main-header,
     .detail-panel,
-    .legend-panel,
     .layer-switcher-panel,
     .settings-dialog {
       pointer-events: auto;
@@ -691,58 +693,7 @@
       margin-top: 6px;
     }
 
-    /* --- 7. Color Legend (Bottom Right) --- */
-    .legend-panel {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      z-index: 10;
-      width: 170px;
-      padding: 10px 12px;
-      border-radius: var(--border-radius-md);
-    }
-
-    .legend-panel h4 {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      color: #fff;
-      border-bottom: 1px solid var(--border-clean);
-      padding-bottom: 4px;
-    }
-
-    .legend-scale {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      font-size: 10.5px;
-      gap: 6px;
-    }
-
-    .legend-color {
-      width: 8px;
-      height: 12px;
-      background-color: var(--aqi-color);
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    .legend-range {
-      font-weight: 600;
-      color: var(--text-primary);
-      width: 44px;
-    }
-
-    .legend-label {
-      color: var(--text-secondary);
-    }
+    /* --- 7. Color Legend (Removed per user request) --- */
 
     /* --- 8. Dynamic Pollutant Switcher Panel (Top Right) --- */
     .layer-switcher-panel {
@@ -750,47 +701,36 @@
       top: 90px;
       right: 20px;
       z-index: 10;
-      width: 180px;
-      padding: 10px;
+      width: auto;
+      padding: 4px;
       border-radius: var(--border-radius-md);
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      flex-direction: row;
+      gap: 4px;
     }
 
     .layer-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #fff;
-      border-bottom: 1px solid var(--border-clean);
-      padding-bottom: 4px;
-    }
-
-    .layer-header svg {
-      color: var(--primary-blue);
+      display: none;
     }
 
     .layer-options {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      flex-direction: row;
+      gap: 3px;
     }
 
     .layer-option {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 6px;
+      justify-content: center;
+      padding: 6px 12px;
       border-radius: var(--border-radius-sm);
       cursor: pointer;
       font-size: 12px;
+      font-weight: 500;
       color: var(--text-secondary);
       transition: var(--transition-fast);
+      white-space: nowrap;
     }
 
     .layer-option:hover {
@@ -799,9 +739,9 @@
     }
 
     .layer-option.active {
-      background: rgba(59, 130, 246, 0.12);
-      color: var(--primary-blue);
-      font-weight: 500;
+      background: var(--primary-blue);
+      color: #ffffff;
+      font-weight: 600;
     }
 
     .layer-option input {
@@ -1142,19 +1082,25 @@
       .layer-switcher-panel {
         position: fixed;
         top: auto;
-        bottom: 70px;
-        right: 8px;
-        width: 140px;
-        font-size: 10.5px;
-        padding: 6px;
+        bottom: 20px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        padding: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .layer-switcher-panel::-webkit-scrollbar {
+        display: none;
+      }
+      .layer-options {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
       }
       .layer-option {
-        padding: 4px;
-        font-size: 11px;
-      }
-
-      .legend-panel {
-        display: none;
+        padding: 5px 10px;
+        font-size: 11.5px;
       }
 
       .leaflet-control-zoom {
@@ -1178,7 +1124,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wind-icon"><path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 15.6A2 2 0 1 1 18 12H2"/><path d="M9.8 9.6A2 2 0 1 0 11 6H2"/></svg>
         </div>
         <div class="logo-text">
-          <h1>AeroScope</h1>
+          <h1>AQImap</h1>
           <span>Global Air Quality</span>
         </div>
       </div>
@@ -1306,77 +1252,36 @@
       </div>
     </main>
 
-    <!-- Map Legend Float (Bottom Right) -->
-    <div class="glass-panel legend-panel animate-fade-in" id="legend-panel">
-      <h4>AQI Scale</h4>
-      <div class="legend-scale">
-        <div class="legend-item" style="--aqi-color: hsl(120, 65%, 36%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">0 - 50</span>
-          <span class="legend-label">Good</span>
-        </div>
-        <div class="legend-item" style="--aqi-color: hsl(43, 90%, 40%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">51 - 100</span>
-          <span class="legend-label">Moderate</span>
-        </div>
-        <div class="legend-item" style="--aqi-color: hsl(24, 90%, 45%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">101 - 150</span>
-          <span class="legend-label">Sensitive</span>
-        </div>
-        <div class="legend-item" style="--aqi-color: hsl(355, 75%, 48%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">151 - 200</span>
-          <span class="legend-label">Unhealthy</span>
-        </div>
-        <div class="legend-item" style="--aqi-color: hsl(268, 60%, 45%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">201 - 300</span>
-          <span class="legend-label">V. Unhealthy</span>
-        </div>
-        <div class="legend-item" style="--aqi-color: hsl(335, 70%, 24%);">
-          <span class="legend-color"></span>
-          <span class="legend-range">301+</span>
-          <span class="legend-label">Hazardous</span>
-        </div>
-      </div>
-    </div>
-
     <!-- Dynamic Pollutant Layer Switcher Widget (Floating Panel Top Right) -->
     <div class="glass-panel layer-switcher-panel animate-fade-in" id="layer-switcher">
-      <div class="layer-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        <span>Visualization Layer</span>
-      </div>
       <div class="layer-options">
         <label class="layer-option active">
           <input type="radio" name="aqi-layer" value="usepa-aqi" checked>
-          <span class="radio-label">Composite AQI</span>
+          <span class="radio-label">AQI</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-pm25">
-          <span class="radio-label">Fine PM<sub>2.5</sub></span>
+          <span class="radio-label">PM₂.₅</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-10">
-          <span class="radio-label">Dust PM<sub>10</sub></span>
+          <span class="radio-label">PM₁₀</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-o3">
-          <span class="radio-label">Ozone O<sub>3</sub></span>
+          <span class="radio-label">O₃</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-no2">
-          <span class="radio-label">Nitrogen NO<sub>2</sub></span>
+          <span class="radio-label">NO₂</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-so2">
-          <span class="radio-label">Sulfur SO<sub>2</sub></span>
+          <span class="radio-label">SO₂</span>
         </label>
         <label class="layer-option">
           <input type="radio" name="aqi-layer" value="usepa-co">
-          <span class="radio-label">Carbon CO</span>
+          <span class="radio-label">CO</span>
         </label>
       </div>
     </div>
